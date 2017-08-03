@@ -1,0 +1,182 @@
+/**********************************************************************************
+* © 2007 Microchip Technology Inc.
+*
+* FileName:        Eg1_BlinkLED.c
+* Dependencies:    p24fj64ga002.h
+* Processor:       PIC24FJ64GA002
+* Compiler:        MPLAB® C30 v3
+*
+* SOFTWARE LICENSE AGREEMENT:
+* Microchip Technology Incorporated ("Microchip") retains all ownership and 
+* intellectual property rights in the code accompanying this message and in all 
+* derivatives hereto.  You may use this code, and any derivatives created by 
+* any person or entity by or on your behalf, exclusively with Microchip,s 
+* proprietary products.  Your acceptance and/or use of this code constitutes 
+* agreement to the terms and conditions of this notice.
+*
+* CODE ACCOMPANYING THIS MESSAGE IS SUPPLIED BY MICROCHIP "AS IS".  NO 
+* WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT NOT LIMITED 
+* TO, IMPLIED WARRANTIES OF NON-INFRINGEMENT, MERCHANTABILITY AND FITNESS FOR A 
+* PARTICULAR PURPOSE APPLY TO THIS CODE, ITS INTERACTION WITH MICROCHIP,S 
+* PRODUCTS, COMBINATION WITH ANY OTHER PRODUCTS, OR USE IN ANY APPLICATION. 
+*
+* YOU ACKNOWLEDGE AND AGREE THAT, IN NO EVENT, SHALL MICROCHIP BE LIABLE, WHETHER 
+* IN CONTRACT, WARRANTY, TORT (INCLUDING NEGLIGENCE OR BREACH OF STATUTORY DUTY), 
+* STRICT LIABILITY, INDEMNITY, CONTRIBUTION, OR OTHERWISE, FOR ANY INDIRECT, SPECIAL, 
+* PUNITIVE, EXEMPLARY, INCIDENTAL OR CONSEQUENTIAL LOSS, DAMAGE, FOR COST OR EXPENSE OF 
+* ANY KIND WHATSOEVER RELATED TO THE CODE, HOWSOEVER CAUSED, EVEN IF MICROCHIP HAS BEEN 
+* ADVISED OF THE POSSIBILITY OR THE DAMAGES ARE FORESEEABLE.  TO THE FULLEST EXTENT 
+* ALLOWABLE BY LAW, MICROCHIP'S TOTAL LIABILITY ON ALL CLAIMS IN ANY WAY RELATED TO 
+* THIS CODE, SHALL NOT EXCEED THE PRICE YOU PAID DIRECTLY TO MICROCHIP SPECIFICALLY TO 
+* HAVE THIS CODE DEVELOPED.
+*
+* You agree that you are solely responsible for testing the code and 
+* determining its suitability.  Microchip has no obligation to modify, test, 
+* certify, or support the code.
+*
+*******************************************************************************************
+*
+*
+* ADDITIONAL NOTES:  In this example program characters pressed on the keyboard are sent to
+* the device via usb. The device replicates the character back to the PC enclosed in quotes. 
+* Also this program blinks all four LEDs at 250ms by using timer 1. 
+*
+*******************************************************************************************/ 
+
+#include "p24fj64ga002.h"
+// the above include path may be different for each user.  If a compile
+// time error appears then check the path for the file above and edit
+// the include statement above.
+
+#include<i2c.h>
+
+
+#define XTFREQ          7372800         		//On-board Crystal frequency
+#define PLLMODE         2               		//On-chip PLL setting
+#define FCY             XTFREQ*PLLMODE        //Instruction Cycle Frequency
+#define BAUDRATE         9600       
+#define BRGVAL          ((FCY/BAUDRATE)/16)-1 
+#define I2CBAUD			400000				// i2c clock running at 400khz
+
+
+
+
+
+
+
+
+
+//_CONFIG1(JTAGEN_OFF&GCP_OFF&GWRP_OFF  &COE_OFF& ICS_PGx1  &FWDTEN_OFF );
+//_CONFIG2(IESO_OFF &FNOSC_PRIPLL&FCKSM_CSDCMD&OSCIOFNC_OFF &I2C1SEL_SEC &POSCMOD_XT );
+
+//
+
+void delay(void)
+{
+	int var1,var2;
+	for(var1=0;var1!=200;var1++)
+	{
+		for(var2=0;var2!=10000;var2++);
+	}
+}
+
+
+//	EnableIntIM2C2;
+//void __attribute__((interrupt, no_auto_psv)) _MI2C2Interrupt(void)
+//{
+//	//	jDone=1;
+//        IFS3bits.MI2C2IF = 0;		//Clear the DMA0 Interrupt Flag;
+//
+//}
+
+void main(void )
+{
+	CLKDIVbits.RCDIV = 0;
+	RPINR18bits.U1RXR = 9;	// Make Pin RP9 U1RX
+	RPOR4bits.RP8R = 3;		// Make Pin RP8 U1TX
+
+	TRISB = 0x0300;
+	U1BRG  = BRGVAL;
+	U1MODE = 0x8000; 		// Reset UART to 8-n-1, alt pins, and enable 
+	U1STA  = 0x0440; 		// Reset status register and enable TX & RX
+
+
+	PADCFG1 = 0xFF;			// Make analog pins digital 
+	LATB  = 0xF000;			//Toggle LED's
+	TRISB = 0x00;			// Configure LED pins as output
+  
+	unsigned int config2, config1,i;
+  	unsigned char *wrptr;
+  	unsigned char tx_data[] = {0x00,0xFF,0x00,0xFF,};//'M','I','C','R','O','C','H','I','P','\0'};
+	char check=0,BB=0,ZZ=90;  
+	
+
+  /* Baud rate is set for 100 Khz */
+  	config2 = 0x90;
+  /* Configure I2C for 7 bit address mode */
+	config1 = 0xF200; //(I2C_ON & I2C_IDLE_CON & I2C_CLK_HLD &
+//             	I2C_IPMI_DIS & I2C_7BIT_ADD &
+//             	I2C_SLW_DIS & I2C_SM_DIS &
+//            	I2C_GCALL_DIS & I2C_STR_DIS &
+//             	I2C_NACK & I2C_ACK_DIS & I2C_RCV_DIS &
+//             	I2C_STOP_DIS & I2C_RESTART_DIS &
+//             	I2C_START_DIS);
+  	
+while(1){ 
+	OpenI2C2(config1,config2); 	
+
+	IdleI2C2();
+  StartI2C2();
+  /* Wait till Start sequence is completed */
+ 	 while(I2C2CONbits.SEN );
+  /* Write Slave address and set master for transmission */
+ 	check = MasterWriteI2C2(0xE6);
+  /* Wait till address is transmitted */
+	if (check==0 ){
+		LATB=0xA000;	
+		IdleI2C2(); 		
+		MasterWriteI2C2(BB); 		
+		IdleI2C2();			
+		StopI2C2();	
+		
+		}
+	else{CloseI2C2();LATB=0x0000;}
+	
+	BB++;
+	delay();
+
+	IdleI2C2();
+  	StartI2C2();
+	 while(I2C2CONbits.SEN );
+	check = MasterWriteI2C2(0xE7);//  Write Slave address and set master for recive 
+	if (check==0 ){
+		LATB=0x5000;	
+		IdleI2C2(); 		
+		ZZ=	MasterReadI2C2();
+ 		IdleI2C2();			
+		AckI2C2();
+		StopI2C2();
+		CloseI2C2();
+
+	}		
+	else{
+		ZZ=-check;//0x02;
+		LATB=0x0000;
+		CloseI2C2();
+		}
+		
+	while(!U1STAbits.TRMT);
+	U1TXREG = '"';
+	while(!U1STAbits.TRMT);		// Echo Back Received Character with quotes
+	U1TXREG = ZZ;
+	while(!U1STAbits.TRMT);
+	U1TXREG = '"';
+	while(!U1STAbits.TRMT);
+	U1TXREG = ' '; 		
+	delay();
+    }
+return;
+}
+
+
+

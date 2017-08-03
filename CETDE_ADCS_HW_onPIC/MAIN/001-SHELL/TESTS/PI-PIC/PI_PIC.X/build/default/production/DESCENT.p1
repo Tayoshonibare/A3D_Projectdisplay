@@ -1,0 +1,117 @@
+Version 3.2 HI-TECH Software Intermediate Code
+"67 DESCENT.h
+[u S1 `uc -> 4 `i `ul 1 ]
+[n S1 . BYTESarray floatValue ]
+[; ;stdint.h: 13: typedef signed char int8_t;
+[; ;stdint.h: 20: typedef signed int int16_t;
+[; ;stdint.h: 28: typedef signed short long int int24_t;
+[; ;stdint.h: 36: typedef signed long int int32_t;
+[; ;stdint.h: 43: typedef unsigned char uint8_t;
+[; ;stdint.h: 49: typedef unsigned int uint16_t;
+[; ;stdint.h: 56: typedef unsigned short long int uint24_t;
+[; ;stdint.h: 63: typedef unsigned long int uint32_t;
+[; ;stdint.h: 71: typedef signed char int_least8_t;
+[; ;stdint.h: 78: typedef signed int int_least16_t;
+[; ;stdint.h: 90: typedef signed short long int int_least24_t;
+[; ;stdint.h: 98: typedef signed long int int_least32_t;
+[; ;stdint.h: 105: typedef unsigned char uint_least8_t;
+[; ;stdint.h: 111: typedef unsigned int uint_least16_t;
+[; ;stdint.h: 121: typedef unsigned short long int uint_least24_t;
+[; ;stdint.h: 128: typedef unsigned long int uint_least32_t;
+[; ;stdint.h: 137: typedef signed char int_fast8_t;
+[; ;stdint.h: 144: typedef signed int int_fast16_t;
+[; ;stdint.h: 156: typedef signed short long int int_fast24_t;
+[; ;stdint.h: 164: typedef signed long int int_fast32_t;
+[; ;stdint.h: 171: typedef unsigned char uint_fast8_t;
+[; ;stdint.h: 177: typedef unsigned int uint_fast16_t;
+[; ;stdint.h: 187: typedef unsigned short long int uint_fast24_t;
+[; ;stdint.h: 194: typedef unsigned long int uint_fast32_t;
+[; ;stdint.h: 200: typedef int32_t intmax_t;
+[; ;stdint.h: 205: typedef uint32_t uintmax_t;
+[; ;stdint.h: 210: typedef int16_t intptr_t;
+[; ;stdint.h: 215: typedef uint16_t uintptr_t;
+"19 DESCENT.h
+[v _DEV_ID `f ~T0 @X0 1 e ]
+[i _DEV_ID
+-> .2019.00 `f
+]
+[; ;DESCENT.h: 19: float DEV_ID = 2019.00;
+"60
+[v _LastI2C1_CMD `uc ~T0 @X0 1 e ]
+[i _LastI2C1_CMD
+-> -> 0 `i `uc
+]
+[; ;DESCENT.h: 60: uint8_t LastI2C1_CMD = 0x00;
+"61
+[v _rVAR `uc ~T0 @X0 -> 4 `i e ]
+[; ;DESCENT.h: 61: uint8_t rVAR[4];
+"62
+[v _rVAR_u `uc ~T0 @X0 1 e ]
+[; ;DESCENT.h: 62: uint8_t rVAR_u;
+"63
+[v _wVAR `uc ~T0 @X0 -> 4 `i e ]
+[; ;DESCENT.h: 63: uint8_t wVAR[4];
+"64
+[v _wVAR_u `uc ~T0 @X0 1 e ]
+[; ;DESCENT.h: 64: uint8_t wVAR_u;
+"65
+[v _wMTQv `uc ~T0 @X0 -> 6 `i e ]
+[; ;DESCENT.h: 65: uint8_t wMTQv[6];
+"70
+[v _SerialLast `S1 ~T0 @X0 1 e ]
+[; ;DESCENT.h: 67: union {
+[; ;DESCENT.h: 68: uint8_t BYTESarray [4];
+[; ;DESCENT.h: 69: uint32_t floatValue;
+[; ;DESCENT.h: 70: } SerialLast;
+[; ;DESCENT.h: 72: void PutFloatInto_rVar (float data, uint8_t LastCMD);
+"6 DESCENT.c
+[v _PutFloatInto_rVar `(v ~T0 @X0 1 ef2`f`uc ]
+{
+[; ;DESCENT.c: 6: void PutFloatInto_rVar (float data, uint8_t LastCMD){
+[e :U _PutFloatInto_rVar ]
+[v _data `f ~T0 @X0 1 r1 ]
+[v _LastCMD `uc ~T0 @X0 1 r2 ]
+[f ]
+"7
+[u S2 `f 1 `uc -> 4 `i ]
+[n S2 . FloatValue bytesOfFloatValue ]
+"10
+[v _floatUnion `S2 ~T0 @X0 1 a ]
+[; ;DESCENT.c: 7: union {
+[; ;DESCENT.c: 8: float FloatValue;
+[; ;DESCENT.c: 9: unsigned char bytesOfFloatValue[4];
+[; ;DESCENT.c: 10: } floatUnion;
+[; ;DESCENT.c: 12: floatUnion.FloatValue = data;
+"12
+[e = . _floatUnion 0 _data ]
+"14
+[v _xount `uc ~T0 @X0 1 a ]
+[; ;DESCENT.c: 14: uint8_t xount =0;
+[e = _xount -> -> 0 `i `uc ]
+[; ;DESCENT.c: 15: for (xount=0; xount<4; ++xount){
+"15
+{
+[e = _xount -> -> 0 `i `uc ]
+[e $ < -> _xount `i -> 4 `i 4  ]
+[e $U 5  ]
+[e :U 4 ]
+{
+[; ;DESCENT.c: 16: rVAR[xount] = floatUnion.bytesOfFloatValue[xount];
+"16
+[e = *U + &U _rVAR * -> _xount `ux -> -> # *U &U _rVAR `ui `ux *U + &U . _floatUnion 1 * -> _xount `ux -> -> # *U &U . _floatUnion 1 `ui `ux ]
+"17
+}
+"15
+[e =+ _xount -> -> 1 `i `uc ]
+[e $ < -> _xount `i -> 4 `i 4  ]
+[e :U 5 ]
+"17
+}
+[; ;DESCENT.c: 17: }
+[; ;DESCENT.c: 18: rVAR_u = LastCMD;
+"18
+[e = _rVAR_u _LastCMD ]
+[; ;DESCENT.c: 21: }
+"21
+[e :UE 3 ]
+}

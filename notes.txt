@@ -1,0 +1,2 @@
+http://www.ti.com/lit/an/sboa035/sboa035.pdf
+old period 7.8125 ms

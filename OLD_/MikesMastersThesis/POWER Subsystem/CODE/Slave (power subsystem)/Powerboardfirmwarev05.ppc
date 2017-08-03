@@ -1,0 +1,44 @@
+[DeviceName]
+Value=P16F777
+[DeviceClock]
+Value=4
+[MainUnit]
+Value=Powerboardfirmwarev05.c
+[DeviceFlags]
+Count=11
+Value0=_CP_OFF = $3FFF
+Value1=_CCP2_RC1 = $3FFF
+Value2=_VBOR_2_0 = $3FFF
+Value3=_BOREN_0 = $3FBF
+Value4=_MCLR_ON = $3FFF
+Value5=_PWRTE_OFF = $3FFF
+Value6=_WDT_ON = $3FFF
+Value7=_XT_OSC = $3FED
+Value8=_BORSEN_0___CFG2 = $3FBF
+Value9=_IESO_OFF___CFG2 = $3FFD
+Value10=_FCMEN_OFF___CFG2 = $3FFE
+[BuildType]
+bType=0
+[ProjectFiles]
+Count=1
+Value0=Powerboardfirmwarev0006.c
+[HeaderFiles]
+Count=1
+Value0=C:\Program Files\Mikroelektronika\mikroC\include\built_in.h
+[ObjLibFiles]
+Count=0
+[PLDFiles]
+Count=0
+[EEPROMinfo]
+isused=0
+[SearchPath]
+Count=6
+Value0=C:\Program Files (x86)\Mikroelektronika\mikroC\Defs\
+Value1=C:\Program Files (x86)\Mikroelektronika\mikroC\Uses\p16\
+Value2=C:\Documents and Settings\Mike.ALPHAQUADRANT\Desktop\power board\V0.02\
+Value3=C:\Program Files\Mikroelektronika\mikroC\Defs\
+Value4=C:\Program Files\Mikroelektronika\mikroC\Uses\p16\
+Value5=C:\Documents and Settings\mike\Desktop\power board\V0.02\
+Value6=C:\Documents and Settings\Mike.ALPHAQUADRANT\Desktop\power board\V0.02\
+[IncludePath]
+Count=0
